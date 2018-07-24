@@ -1,0 +1,14 @@
+{
+  "name": "bot.unagnisha.co.ke",
+  "version": "2.0.0",
+  "description": "unganisha bot is an artifical intelligence persona that summons ambulances in times of need",
+  "main": "index.js",
+  "scripts": {
+    "test": "unganisha_ke"
+  },
+  "author": "Victor Abedi",
+  "license": "MIT",
+  "dependencies": {
+    "bootbot": "^1.0.16"
+  }
+}
