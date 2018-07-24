@@ -1,5 +1,6 @@
 // @flow
 'use strict';
+
 // const BootBot = require('bootbot');
 const BootBot = require('./lib/BootBot');
 const config = require('config');
@@ -483,3 +484,4 @@ bot.on('message', (payload, chat) => {
 
 });
 bot.start();
+module.exports = () => 'Ahoy, world!'
