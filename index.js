@@ -90,7 +90,7 @@ bot.on('message', (payload, chat) => {
   } else if(text == 'Request Ambulance') {
     chat.sendListTemplate([{
       "title": "AAR HEALTHCARE",
-      "image_url": "https://d2z4fd79oscvvx.cloudfront.net/0023640_black_forest_cake.jpeg",
+      "image_url": "http://www.aar-healthcare.com/ke/wp-content/uploads/2017/02/ambul.jpg",
       "website": "http://www.aar-healthcare.com/ke/rescue-services/",
       "subtitle": "Emergency Rescue Services was started in 1984 as Africa Air Rescue. Since then, additional services have added to provide holistic health care provision resulting to Health Centers and the insurance company. Today, AAR Healthcare is in all the East Africa countries, providing not only emergency rescue services but Outpatient and medical insurance. ",
       "buttons": [{
@@ -101,7 +101,7 @@ bot.on('message', (payload, chat) => {
     },
     {
       "title": "KENYA REDCROSS",
-      "image_url": "https://d2z4fd79oscvvx.cloudfront.net/0023640_black_forest_cake.jpeg",
+      "image_url": "https://pbs.twimg.com/media/BD9xbP1CcAASh82.jpg",
       "website": "http://eplus.co.ke/",
       "subtitle": "Emergency Plus Medical Services (E-Plus)) is a private commercial company, fully owned by the Kenya Red Cross Society, whose core business is the provision of professional advanced pre-hospital medical care and ambulance services in Kenya ",
       "buttons": [{
@@ -112,7 +112,7 @@ bot.on('message', (payload, chat) => {
     },
     {
       "title": "ST JOHNS AMBULANCE ",
-      "image_url": "http://trivandrumcakehouse.com/wp-content/uploads/2015/10/cake-white-forest.jpg",
+      "image_url": "https://static2.stuff.co.nz/1301346314/809/4820809.jpg",
       "subtitle": "St John Ambulance is available round the clock, 24/7 for casualties in need of critical evacuation during emergencies and disasters. We also provide hospital ambulance transfers and standby ambulance and paramedics and first aiders at events",
       "buttons": [{
         "title": "REQUEST ST JOHNS AMBULANCE",
@@ -122,7 +122,7 @@ bot.on('message', (payload, chat) => {
     },
     {
       "title": "AMREF KENYA ",
-      "image_url": "http://trivandrumcakehouse.com/wp-content/uploads/2015/10/cake-white-forest.jpg",
+      "image_url": "https://pbs.twimg.com/profile_images/933412079339372544/xvrtDYtH_400x400.jpg",
       "subtitle": "Leading halthcare provider in safe and proffessional aero-medical",
       "buttons": [{
         "title": "REQUEST AMREF KENYA",
@@ -153,7 +153,7 @@ bot.on('message', (payload, chat) => {
     }));
   });
   
-  bot.on('postback:BLACKFOREST_PAYLOAD', (payload, chat) => {
+  bot.on('postback:ARR_PAYLOAD', (payload, chat) => {
     chat.say('You selected BlackForest', {
       typing: true
     });
@@ -162,7 +162,7 @@ bot.on('message', (payload, chat) => {
       convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
     });
   });
-  bot.on('postback:BLACKFOREST_PAYLOAD', (payload, chat) => {
+  bot.on('postback:AMREF_PAYLOAD', (payload, chat) => {
     chat.say('You selected BlackForest', {
       typing: true
     });
@@ -171,7 +171,7 @@ bot.on('message', (payload, chat) => {
       convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
     });
   });
-  bot.on('postback:BLACKFOREST_PAYLOAD', (payload, chat) => {
+  bot.on('postback:STJ_PAYLOAD', (payload, chat) => {
     chat.say('You selected BlackForest', {
       typing: true
     });
@@ -180,7 +180,7 @@ bot.on('message', (payload, chat) => {
       convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
     });
   });
-  bot.on('postback:BLACKFOREST_PAYLOAD', (payload, chat) => {
+  bot.on('postback:KR_PAYLOAD', (payload, chat) => {
     chat.say('You selected BlackForest', {
       typing: true
     });
