@@ -4,30 +4,48 @@
 // const BootBot = require('bootbot');
 const BootBot = require('./lib/BootBot');
 const config = require('config');
-
+const echoModule = require('./examples/modules/echo');
+const helpModule = require('./examples/modules/help');
 const bot = new BootBot({
   accessToken: config.get('access_token'),
   verifyToken: config.get('verify_token'),
   appSecret: config.get('app_secret')
 });
 
-bot.hear(['OneTime','911','help', /hey( there)?/i], (payload, chat) => {
+bot.hear(['OneTime','911', /hey( there)?/i], (payload, chat) => {
   // Send a text message followed by another text message that contains a typing indicator
   const options = {
     typing: true
   };
   chat.getUserProfile().then((user) => {
-    chat.say(`Take a breath and relax while i help you out`)
+    chat.say(`Take a breath and relax `)
+    .then(() => chat.say({
+      text: 'How can i help?',
+      quickReplies: ['My Savings', 'Request Ambulance',"Daily HealthVibes"]
+    }));
 });
 });
 
+
+bot.hear(['help'], (payload, chat) => {
+  // Send a text message with buttons
+  chat.say({
+      text: 'What do you need help with?',
+      buttons: [
+          { type: 'postback', title: 'Settings', payload: 'HELP_SETTINGS' },
+          { type: 'postback', title: 'FAQ', payload: 'HELP_FAQ' },
+          { type: 'postback', title: 'Talk to a human', payload: 'HELP_HUMAN' }
+      ]
+  });
+  
+});
 bot.hear(['hello','niaje','sasa', 'hi', /hey( there)?/i], (payload, chat) => {
   // Send a text message followed by another text message that contains a typing indicator
   const options = {
     typing: true
   };
   chat.getUserProfile().then((user) => {
-    chat.say(`Hi, ${user.first_name}!Nice to see you there.`
+    chat.say(`Hi, ${user.first_name}! Nice to see you here.`
     ,options).then(() => chat.say({
       text: 'How can i help you today?',
       quickReplies: ['My Savings', 'Request Ambulance',"Daily HealthVibes"]
@@ -41,7 +59,7 @@ bot.setGetStartedButton((payload, chat) => {
   };
     // Greet the customer then ask what he would like to order, a cake or doughnut?
   chat.getUserProfile().then((user) => {
-    chat.say(`Hi, ${user.first_name}!Nice to see you there.`
+    chat.say(`Hi, ${user.first_name}! Nice to see you here.`
     ,options).then(() => chat.say({
       text: 'How can i help you today?',
       quickReplies: ['My Savings', 'Request Ambulance',"Daily HealthVibes"]
@@ -88,10 +106,11 @@ bot.on('message', (payload, chat) => {
     }], options));
 
   } else if(text == 'Request Ambulance') {
-    chat.sendListTemplate([{
+    chat.say('Select One', {
+      typing: true
+    }).then(() => chat.sendListTemplate([{
       "title": "AAR HEALTHCARE",
       "image_url": "http://www.aar-healthcare.com/ke/wp-content/uploads/2017/02/ambul.jpg",
-      "website": "http://www.aar-healthcare.com/ke/rescue-services/",
       "subtitle": "Emergency Rescue Services was started in 1984 as Africa Air Rescue. Since then, additional services have added to provide holistic health care provision resulting to Health Centers and the insurance company. Today, AAR Healthcare is in all the East Africa countries, providing not only emergency rescue services but Outpatient and medical insurance. ",
       "buttons": [{
         "title": "REQUEST AAR",
@@ -102,7 +121,6 @@ bot.on('message', (payload, chat) => {
     {
       "title": "KENYA REDCROSS",
       "image_url": "https://pbs.twimg.com/media/BD9xbP1CcAASh82.jpg",
-      "website": "http://eplus.co.ke/",
       "subtitle": "Emergency Plus Medical Services (E-Plus)) is a private commercial company, fully owned by the Kenya Red Cross Society, whose core business is the provision of professional advanced pre-hospital medical care and ambulance services in Kenya ",
       "buttons": [{
         "title": "REQUEST KENYA REDCROSS",
@@ -134,354 +152,89 @@ bot.on('message', (payload, chat) => {
     "title": "View More",
     "type": "postback",
     "payload": "VIEWMORE_PAYLOAD"
-  }], options);
+  }], options));
 
   }else{
 
   }
-  bot.on('postback:LIPA_NA_M-PESA__SELF_PAYLOAD', (payload, chat) => {
-    chat.say('Please wait for M-PESA prompt on your phone', {
-      typing: true
-    });
-  });
-  
-  bot.on('postback:LIPA_NA_M-PESA__OTHER_PAYLOAD', (payload, chat) => {
-    chat.say('Please enter the phone number of the person you would wish to remit to?', {
-      typing: true
-    }).then(() => chat.say({
-        text: 'Please wait for an M-PESA promt on your phone'
+
+
+});
+bot.on('postback:AMREF_PAYLOAD', (payload, chat) => {
+  const options = {
+    typing: true
+  };
+  chat.getUserProfile().then((user) => {
+    chat.say(`Welcome, ${user.first_name} to the Amref Ambulance Kenya emergency unit. HealthCare Ke assistant will help you request for an emergency ride? But first we have to understand you emergency before we depatch our ambulance to you location. `
+    ,options).then(() => chat.say({
+      text: 'please try out these question. you can also send a voice note. Good Luck!!',
+      quickReplies: ['Answer Question', 'Cancel']
     }));
   });
-  
-  bot.on('postback:ARR_PAYLOAD', (payload, chat) => {
-    chat.say('You selected BlackForest', {
-      typing: true
-    });
-    chat.conversation((convo) => {
-      convo.set('name', 'blackforest');
-      convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
-    });
-  });
-  bot.on('postback:AMREF_PAYLOAD', (payload, chat) => {
-    chat.say('You selected BlackForest', {
-      typing: true
-    });
-    chat.conversation((convo) => {
-      convo.set('name', 'blackforest');
-      convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
+});
+
+bot.on('message', (payload, chat) => {
+const text = payload.message.text;
+const options = {
+  typing: true
+};
+if(text == 'Answer Question'){
+  chat.conversation(convo => {
+    convo.ask(`Whats Your emergency`, (payload, convo, data) => {
+      convo.say(`Ok`).then(() => askDuration(convo));
+
     });
   });
-  bot.on('postback:STJ_PAYLOAD', (payload, chat) => {
-    chat.say('You selected BlackForest', {
-      typing: true
+  const askDuration = (convo) => {
+    convo.ask(`How long has these being happening`, (payload, convo, data) => {
+      convo.say(`Got it`).then(() => askPeriod(convo));
     });
-    chat.conversation((convo) => {
-      convo.set('name', 'blackforest');
-      convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
-    });
-  });
-  bot.on('postback:KR_PAYLOAD', (payload, chat) => {
-    chat.say('You selected BlackForest', {
-      typing: true
-    });
-    chat.conversation((convo) => {
-      convo.set('name', 'blackforest');
-      convo.sendTypingIndicator(1000).then(() => askQuantity(convo));
-    });
-  });
-
-  const askQuantity = (convo) => {
-
-    const question = {
-      text: `How many do you want?`,
-      quickReplies: ['1', '2', '3', '4', '5']
-    };
-
-    const answer = (payload, convo, data) => {
-      // const text = payload.message.text;
-      // convo.set('Quantity',text);
-      // convo.say(`Ok ${text} of them.`);
-
-    };
-
-    const payload = [{
-      event: 'quick_reply',
-      callback: (payload, convo, data) => {
-        const text = payload.message.text;
-        convo.set('Quantity', text);
-        convo.say(`Ok ${text} of them.`);
-        askSize(convo);
-      }
-    }];
-
-    const options = {
-      typing: true
-    };
-
-    convo.ask(question, answer, payload, options);
-
-    // convo.ask({
-    // 	text: `How many do you want?`,
-    // 	quickReplies: ['1', '2', '3','4','5']
-    // }, {
-    //   text: `Ok ${payload.message.text} of them.`
-    // });
-    // const text = payload.message.text;
-    // convo.set('Quantity',text).then(() => askSize(convo) );
   };
-
-  const askSize = (convo) => {
-
-    const question = {
-      text: `What size would you like?`,
-      quickReplies: ['500g', '1Kg', '2Kg']
-    };
-    const answer = (payload, convo, data) => {
-      // const text = payload.message.text;
-      // convo.say(`Ok ${text} .`);
-      // convo.set('Size',text);
-    };
-
-    const payload = [{
-      event: 'quick_reply',
-      callback: (payload, convo, data) => {
-        const text = payload.message.text;
-        convo.say(`Ok ${text} .`);
-        convo.set('Size', text);
-
-        const payload_1 = {
-
-          "template_type": "receipt",
-          "recipient_name": "Peter Okwara",
-          "order_number": "000000000000000",
-          "currency": "USD",
-          "payment_method": "MPESA",
-          "timestamp": "1428444852",
-          "elements": [{
-              "title": "BlackForest Cake",
-              "subtitle": "Includes: headset, sensor, remote",
-              "quantity": 1,
-              "price": 599.00,
-              "currency": "USD"
-            }
-          ],
-          "address": {
-            "street_1": "Pangani",
-            "street_2": "",
-            "city": "Menlo Park",
-            "postal_code": "94025",
-            "state": "CA",
-            "country": "US"
-          },
-          "summary": {
-            "subtotal": 698.99,
-            "shipping_cost": 20.00,
-            "total_tax": 57.67,
-            "total_cost": 626.66
-          },
-          "adjustments": [{
-              "name": "New Customer Discount",
-              "amount": -50
-            },
-            {
-              "name": "$100 Off Coupon",
-              "amount": -100
-            }
-          ]
-
-
-        };
-
-
-
-
-        const options_1 = {
-          typing: true
-        };
-        convo.sendTemplate(payload_1, options_1);
-
-      //   convo.say(`Ok, here's what you told me about you:
-      // - Name: ${convo.get('Size')}
-      // - Favorite Food: ${convo.get('Quantity')}
-      // `);
-      //   askSize(convo);
-      }
-    }];
-
-    const options = {
-      typing: true
-    };
-
-    convo.ask(question, answer, payload, options);
-    // convo.ask({
-    //   text: `What size would you like?`,
-    //   quickReplies: ['500g', '1Kg', '2Kg']
-    // }, {
-    //   text: `Ok ${payload.message.text}`
-    // });
-    // const text = payload.message.text;
-    // convo.set('Size',text).then(() => askSize(convo));
-    // convo.end();
+  const askPeriod = (convo) => {
+    convo.ask(`How has you body being behaving in the last 30min( Estimated time, You can skip these)`, (payload, convo, data) => {
+      convo.say(`Thanks for your responce`).then(() => getLocation(convo));
+    });
   };
-
-  const sendReceipt = (convo) => {
+  const getLocation = (convo) => {
+         const options = {
+        typing: true
+      };
+      chat.getUserProfile().then((user) => {
+        chat.say(``
+        ,options).then(() => chat.say({
+          text: 'Press button to share your location',
+          quickReplies: ['Share Location'],
+          
+        }));
+      });
+      
 
   }
+  bot.on('message', (payload, chat) => {
+    const text = payload.message.text;
+    console.log(`The user said: ${text}`);
+  
+    const options = {
+      typing: true
+    };
+  
+    if (text == 'Share Location') {
+      chat.say('Dispatch Request Submitted', {
+        typing: true
+      }).then(() => chat.say({
+        text: 'Your request has being approved',
+        image_url : 'https://scontent.fnbo3-1.fna.fbcdn.net/v/t34.18173-12/18601594_1506223109443496_153865763_n.gif?_nc_cat=0&fallback=1&oh=776b344aabe29d365e340361f944b7e3&oe=5B5ACBC4',
+      })
+    )}
+    else{
 
+    }
+  })
+}
 
-  //   const question1 = {
-  //     text: `What size would you like?`,
-  //     quickReplies: ['500g', '1Kg', '2Kg']
-  //   };
-  //
-  //   const answer1 = (payload, convo) => {
-  //     const text = payload.message.text;
-  //     convo.say(`Ok ${text} .`);
-  //   };
-  //
-  // //   bot.hear('hello', (payload, chat) => {
-  // //   chat.conversation((convo) => {
-  // //     convo.sendTypingIndicator(1000).then(() => askName(convo));
-  // //   });
-  // // });
-  //
-  // const askName = (convo) => {
-  //   convo.ask(`Hello! What's your name?`, (payload, convo, data) => {
-  //     const text = payload.message.text;
-  //     convo.set('name', text);
-  //     convo.say(`Oh, your name is ${text}`).then(() => askFavoriteFood(convo));
-  //   });
-  // };
-  //
-  // const askFavoriteFood = (convo) => {
-  //   convo.ask(`What's your favorite food?`, (payload, convo, data) => {
-  //     const text = payload.message.text;
-  //     convo.set('food', text);
-  //     convo.say(`Got it, your favorite food is ${text}`).then(() => askGender(convo));
-  //   });
-  // };
+  else{
 
-  // const askGender = (convo) => {
-  //   convo.ask((convo) => {
-  //     const buttons = [
-  //       { type: 'postback', title: 'Male', payload: 'GENDER_MALE' },
-  //       { type: 'postback', title: 'Female', payload: 'GENDER_FEMALE' },
-  //       { type: 'postback', title: 'I don\'t wanna say', payload: 'GENDER_UNKNOWN' }
-  //     ];
-  //     convo.sendButtonTemplate(`Are you a boy or a girl?`, buttons);
-  //   }, (payload, convo, data) => {
-  //     const text = payload.message.text;
-  //     convo.set('gender', text);
-  //     convo.say(`Great, you are a ${text}`).then(() => askAge(convo));
-  //   }, [
-  //     {
-  //       event: 'postback',
-  //       callback: (payload, convo) => {
-  //         convo.say('You clicked on a button').then(() => askAge(convo));
-  //       }
-  //     },
-  //     {
-  //       event: 'postback:GENDER_MALE',
-  //       callback: (payload, convo) => {
-  //         convo.say('You said you are a Male').then(() => askAge(convo));
-  //       }
-  //     },
-  //     {
-  //       event: 'quick_reply',
-  //       callback: () => {}
-  //     },
-  //     {
-  //       event: 'quick_reply:COLOR_BLUE',
-  //       callback: () => {}
-  //     },
-  //     {
-  //       pattern: ['yes', /yea(h)?/i, 'yup'],
-  //       callback: () => {
-  //         convo.say('You said YES!').then(() => askAge(convo));
-  //       }
-  //     }
-  //   ]);
-  // };
-
-  // const askAge = (convo) => {
-  //   convo.ask(`Final question. How old are you?`, (payload, convo, data) => {
-  //     const text = payload.message.text;
-  //     convo.set('age', text);
-  //     convo.say(`That's great!`).then(() => {
-  //       convo.say(`Ok, here's what you told me about you:
-  //       - Name: ${convo.get('name')}
-  //       - Favorite Food: ${convo.get('food')}
-  //       - Gender: ${convo.get('gender')}
-  //       - Age: ${convo.get('age')}
-  //       `);
-  //       convo.end();
-  //     });
-  //   });
-  // };
-
-  //   bot.hear('Cake', (payload, chat) => {
-  //
-  // });
-
-  // bot.hear('Doughnut', (payload, chat) => {
-  //
-  // });
-
-  // bot.on('postback:BLACKFOREST_PAYLOAD', (payload, chat) => {
-  //   chat.say('You selected BlackForest',{typing: true});
-  //   chat.conversation((convo) => {
-  //     convo.sendTypingIndicator(1000).then(() => askQuantity(convo)).then(() => askSize(convo));
-  //   });
-  // });
-  //
-  // const askQuantity = (convo) => {
-  //   convo.ask(question, answer)
-  // };
-  //
-  // const question = {
-  // 	text: `How many do you want?`,
-  // 	quickReplies: ['1', '2', '3','4','5']
-  // };
-  //
-  // const answer = (payload, convo) => {
-  // 	const text = payload.message.text;
-  // 	convo.say(`Ok ${text} of them.`);
-  // };
-  //
-  // const askSize = (convo) => {
-  //   convo.ask(question1, answer1);
-  // };
-  //
-  // const question1 = {
-  //   text: `What size would you like?`,
-  //   quickReplies: ['500g', '1Kg', '2Kg']
-  // };
-  //
-  // const answer1 = (payload, convo) => {
-  //   const text = payload.message.text;
-  //   convo.say(`Ok ${text} .`);
-  // };
-
-  // bot.hear('hello', (payload, chat) => {
-  //   chat.conversation((convo) => {
-  //     convo.sendTypingIndicator(1000).then(() => askName(convo));
-  //   });
-  // });
-
-  // const askFavoriteFood = (convo) => {
-  //   convo.ask(`What's your favorite food?`, (payload, convo, data) => {
-  //     const text = payload.message.text;
-  //     convo.set('food', text);
-  //     convo.say(`Got it, your favorite food is ${text}`).then(() => askGender(convo));
-  //   });
-  // };
-  //
-  // chat.say(welcome, options)
-  //   .then(() => chat.say({
-  //     text: 'What would you like to order today?',
-  //     quickReplies: ['Cake', 'Doughnut']
-  //   }));
-
+}
 });
 bot.start();
 module.exports = () => 'Ahoy, world!'

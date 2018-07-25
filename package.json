@@ -6,13 +6,11 @@
   "scripts": {
     "test": "unganisha_ke",
     "start": "node index.js"
-
   },
   "author": "Victor Abedi",
   "license": "MIT",
   "dependencies": {
     "bootbot": "^1.0.16",
     "micro": "latest"
-
   }
 }
